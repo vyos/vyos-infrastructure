@@ -88,7 +88,11 @@ def close_task(task_id, phab):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("-t", "--token", type=str, help="API token", required=True)
+    parser.add_argument("-d", "--dry", help="dry run", action="store_true", default=False)
     args = parser.parse_args()
+
+    if args.dry:
+        print("This is a dry run")
 
     phab = Phabricator(host='https://vyos.dev/api/', token=args.token)
 
@@ -176,7 +180,10 @@ def main():
                         task_finish = False
                 if task_finish:
                     print(f'T{task_id} is Finished in all projects')
-                    close_task(task_id, phab)
+                    if not args.dry:
+                        close_task(task_id, phab)
+                    else:
+                        print(f'T{task_id} would be closed')
                 break
 
 
