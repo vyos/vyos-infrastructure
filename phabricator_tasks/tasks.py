@@ -21,8 +21,8 @@ args = parser.parse_args()
 TOKEN = args.token
 DRYRUN = args.dry
 # DRYRUN = True
-UMASIGN_AFTER_DAYS = 90
-UMASIGN_AFTER_DAYS = timedelta(days=UMASIGN_AFTER_DAYS)
+UNASSIGN_AFTER_DAYS = 90
+UNASSIGN_AFTER_DAYS = timedelta(days=UNASSIGN_AFTER_DAYS)
 NOW = datetime.now()
 
 if DRYRUN:
@@ -47,10 +47,10 @@ for task in tasks:
     
 
     '''
-    # unassign tasks with no process after UMASIGN_AFTER_DAYS
+    # unassign tasks with no process after UNASSIGN_AFTER_DAYS
     if task['assigned_user'] and task['assigned_time']:
         delta = NOW - datetime.fromtimestamp(int(task['assigned_time']))
-        if delta > UMASIGN_AFTER_DAYS:
+        if delta > UNASSIGN_AFTER_DAYS:
             if task['task_status'] != 'open':
                 if DRYRUN:
                     print(f'dryrun: T{task["task_id"]} with status {task['task_status']} would be unassigned after {delta.days} days')
