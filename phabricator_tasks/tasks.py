@@ -9,7 +9,7 @@ implement Tasks checks and workflows on vyos.dev
 
 import argparse
 import json
-from phabricator_tasks.get_task_data import get_task_data, close_task, unassign_task
+from get_task_data import get_task_data, close_task, unassign_task
 from datetime import datetime, timedelta
 
 parser = argparse.ArgumentParser()
