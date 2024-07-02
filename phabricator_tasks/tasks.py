@@ -1,9 +1,9 @@
 '''
 
-implement Tasks checks and workflows on vyos.dev
+Phorge task chores:
 
-1. Close a tasks if the Task is in all "Finished" columns
-
+1. Close a tasks if it's "Finished" in all boards but not yet resolved
+2. Unassign tasks that are nominally assigned to someone but had no activity in a long time
 
 '''
 
@@ -20,7 +20,7 @@ args = parser.parse_args()
 
 TOKEN = args.token
 DRYRUN = args.dry
-# DRYRUN = True
+
 UNASSIGN_AFTER_DAYS = 90
 UNASSIGN_AFTER_DAYS = timedelta(days=UNASSIGN_AFTER_DAYS)
 NOW = datetime.now()
@@ -31,7 +31,8 @@ if DRYRUN:
 tasks = get_task_data(TOKEN)
 
 for task in tasks:
-    # close tasks it is in any projects "finished" column
+    # Close tasks that are in the "Finished" column in all projects
+    # but aren't marked resolved yet
     if len(task['projects']) > 0:
         finished = True
         for project in task['projects']:
@@ -39,22 +40,19 @@ for task in tasks:
                 finished = False
                 break
         if finished:
+            print(f'Closing task T{task["task_id"]} (finished in all boards)')
             if DRYRUN:
-                print(f'dryrun: T{task["task_id"]} would be closed')
+                pass
             else:
-                close_task(task['task_id'], TOKEN)
-            continue
-    
+                close_task(task['task_phid'], TOKEN)
 
-    '''
-    # unassign tasks with no process after UNASSIGN_AFTER_DAYS
-    if task['assigned_user'] and task['assigned_time']:
-        delta = NOW - datetime.fromtimestamp(int(task['assigned_time']))
+    # Unassign tasks that supposed assignees aren't actively working on in a long time
+    if task['assigned_user']:
+        delta = NOW - datetime.fromtimestamp(int(task['last_modified']))
         if delta > UNASSIGN_AFTER_DAYS:
-            if task['task_status'] != 'open':
-                if DRYRUN:
-                    print(f'dryrun: T{task["task_id"]} with status {task['task_status']} would be unassigned after {delta.days} days')
-                else:
-                    unassign_task(task['task_id'], TOKEN)
-                continue
-    '''
+            print(f'Unassigning task T{task["task_id"]} after {delta.days} days of inactivity')
+            if DRYRUN:
+                pass
+            else:
+                unassign_task(task['task_id'], TOKEN)
+

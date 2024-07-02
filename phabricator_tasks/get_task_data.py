@@ -50,8 +50,7 @@ class Phabricator(PhabricatorOriginal):
     def __init__(self, **kwargs):
         kwargs['interface'] = copy.deepcopy(parse_interfaces(INTERFACES))
         super(Phabricator, self).__init__(self, **kwargs)
-        
-''' end of extend the original Phabricator class'''
+
 
 def phab_api(token):
     return Phabricator(host='https://vyos.dev/api/', token=token)
@@ -94,26 +93,29 @@ def get_project_default_column(project_id, workboards):
             return workboard['phid'], workboard['fields']['name']
     return None, None
 
-
 def close_task(task_id, token):
     phab = phab_api(token)
     try:
-        response = phab.maniphest.update(
-            id=task_id,
-            status='resolved'
+        response = phab.maniphest.edit(
+            objectIdentifier=task_id,
+            transactions=[{'type': 'status', 'value': 'resolved'}]
         )
         if response.response['isClosed']:
             print(f'T{task_id} closed')
     except Exception as e:
         print(f'T{task_id} Error: {e}')
 
-
 def unassign_task(task_id, token):
     phab = phab_api(token)
-    raise NotImplementedError
+    try:
+        response = phab.maniphest.edit(
+            objectIdentifier=task_id,
+            transactions=[{'type': 'owner', 'value': None}]
+        )
+    except Exception as e:
+        print(f'T{task_id} Error: {e}')
 
 def get_task_data(token):
-
     phab = phab_api(token)
     # get list with all open status namens
     open_status_list = phab.maniphest.querystatuses().response
@@ -124,7 +126,7 @@ def get_task_data(token):
     tasks = phab_search(phab.maniphest.search, constraints={
                         'statuses': open_status_list
                     })
-    
+
     # get all projects to translate id to name
     projects_raw = phab_search(phab.project.search)
     projects = {}
@@ -132,7 +134,7 @@ def get_task_data(token):
         projects[p['phid']] = p['fields']['name']
 
     workboards = phab_search(phab.project.column.search)
-   
+
     # get sub-project hirarchy from proxyPHID in workboards
     project_hirarchy = {}
     for workboard in workboards:
@@ -148,10 +150,11 @@ def get_task_data(token):
     for task in tasks:
         task_data = {
             'task_id': task['id'],
+            'task_phid': task['phid'],
             'task_name': task['fields']['name'],
             'task_status': task['fields']['status']['value'],
             'assigned_user': task['fields']['ownerPHID'],
-            'assigned_time': None,
+            'last_modified': task['fields']['dateModified'],
             'projects': []
         }
         if task['fields']['status']['value'] in open_status_list:
@@ -160,13 +163,6 @@ def get_task_data(token):
             task_data['task_open'] = False
         transactions = phab.maniphest.gettasktransactions(ids=[task['id']])
 
-        # transactionType: reassign to get assigened time
-        if task_data['assigned_user']:
-            for transaction in transactions[str(task['id'])]:
-                if transaction['transactionType'] == 'reassign' and transaction['newValue'] == task['fields']['ownerPHID']:
-                    task_data['assigned_time'] = transaction['dateCreated']
-                    break
-        
         # transactionType: core:edge
         # loop reversed from oldest to newest transaction
         # core:edge transactionType is used if the task is moved to another project but stay in default column
@@ -181,7 +177,7 @@ def get_task_data(token):
                 for newValue in transaction['newValue']:
                     if "PHID-PROJ" in newValue:
                         task_projects.append(newValue)
-        
+
         # transactionType: core:columns
         # use task_projects items as search indicator 'boardPHID' == project_id
         # remove project from task_projects if the task is moved from the default column to another column
@@ -196,7 +192,7 @@ def get_task_data(token):
                         'project_id': transaction['newValue'][0]['boardPHID'],
                     })
 
-        
+
         # handle remaining projects and set the project base default column
         for project in task_projects:
             default_columnid, default_columnname = get_project_default_column(project, workboards)
