@@ -1,6 +1,8 @@
 '''
 get all tasks and project information from vyos.dev
 
+Example:
+
     {
         "task_id": 6473,
         "task_name": "bgp: missing completion helper for peer-groups inside a VRF",
@@ -15,6 +17,8 @@ get all tasks and project information from vyos.dev
                 "project_id": "PHID-PROJ-qakk4yrxprecshrgbehq"
             }
         ],
+        "issue_type": "bug",
+        "difficulty_level": "easy",
         "task_open": true
     }
 
@@ -115,6 +119,16 @@ def unassign_task(task_id, token):
     except Exception as e:
         print(f'T{task_id} Error: {e}')
 
+def add_project(task_id, project, token):
+    phab = phab_api(token)
+    try:
+        response = phab.maniphest.edit(
+            objectIdentifier=task_id,
+            transactions=[{'type': 'projects.add', 'value': [project]}]
+        )
+    except Exception as e:
+        print(f'T{task_id} Error: {e}')
+
 def get_task_data(token):
     phab = phab_api(token)
     # get list with all open status namens
@@ -155,6 +169,8 @@ def get_task_data(token):
             'task_status': task['fields']['status']['value'],
             'assigned_user': task['fields']['ownerPHID'],
             'last_modified': task['fields']['dateModified'],
+            'issue_type': task["fields"]["custom.issue-type"],
+            'difficulty_level': task["fields"]["custom.difficulty-level"],
             'projects': []
         }
         if task['fields']['status']['value'] in open_status_list:
