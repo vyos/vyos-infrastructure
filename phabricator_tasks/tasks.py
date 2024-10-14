@@ -68,7 +68,7 @@ for task in tasks:
 
     # Tag tasks "Bug" for ease of searching
     if task['issue_type'] in ['bug', 'vulnerability']:
-        print(f"Categorizing task T{task["task_id"]} as bug based on its issue type")
+        print(f'Categorizing task T{task["task_id"]} as bug based on its issue type')
         if DRYRUN:
             pass
         else:
@@ -77,7 +77,7 @@ for task in tasks:
     # Tag tasks "Uncategorized tasks" to draw maintainer attention to them
     # if "Issue type" is not specified
     if task['issue_type'] == 'unspecified':
-        print(f"Marking task T{task["task_id"]} uncategorized based on its issue type")
+        print(f'Marking task T{task["task_id"]} uncategorized based on its issue type')
         if DRYRUN:
             pass
         else:
@@ -85,7 +85,7 @@ for task in tasks:
 
     # Tag tasks "Bug" for ease of searching
     if task['difficulty_level'] == 'easy':
-        print(f"Categorizing task T{task["task_id"]} as a beginner task based on its difficulty level")
+        print(f'Categorizing task T{task["task_id"]} as a beginner task based on its difficulty level')
         if DRYRUN:
             pass
         else:
