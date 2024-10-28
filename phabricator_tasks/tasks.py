@@ -67,12 +67,13 @@ for task in tasks:
 
 
     # Tag tasks "Bug" for ease of searching
-    if task['issue_type'] in ['bug', 'vulnerability']:
-        print(f'Categorizing task T{task["task_id"]} as bug based on its issue type')
-        if DRYRUN:
-            pass
-        else:
-            add_project(task['task_id'], BUGS_PROJECT, TOKEN)
+    # XXX: disabled due to issue with statuses for now
+    #if task['issue_type'] in ['bug', 'vulnerability']:
+    #    print(f'Categorizing task T{task["task_id"]} as bug based on its issue type')
+    #    if DRYRUN:
+    #        pass
+    #    else:
+    #        add_project(task['task_id'], BUGS_PROJECT, TOKEN)
 
     # Tag tasks "Uncategorized tasks" to draw maintainer attention to them
     # if "Issue type" is not specified
