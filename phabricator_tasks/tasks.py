@@ -70,11 +70,3 @@ for task in tasks:
             pass
         else:
             add_project(task['task_id'], UNCATEGORIZED_TASKS_PROJECT, TOKEN)
-
-    # Tag tasks "Bug" for ease of searching
-    if task['difficulty_level'] == 'easy':
-        print(f'Categorizing task T{task["task_id"]} as a beginner task based on its difficulty level')
-        if DRYRUN:
-            pass
-        else:
-            add_project(task['task_id'], BUGS_PROJECT, TOKEN)
