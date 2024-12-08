@@ -4,9 +4,6 @@ Phorge task chores:
 
 1. Close a tasks if it's "Finished" in all boards but not yet resolved
 2. Unassign tasks that are nominally assigned to someone but had no activity in a long time
-3. Tag tasks "Bug" if the type is "bug" for ease of searching
-   (since Phorge still can't search by custom fields...)
-
 '''
 
 import argparse
@@ -64,16 +61,6 @@ for task in tasks:
                 pass
             else:
                 unassign_task(task['task_id'], TOKEN)
-
-
-    # Tag tasks "Bug" for ease of searching
-    # XXX: disabled due to issue with statuses for now
-    #if task['issue_type'] in ['bug', 'vulnerability']:
-    #    print(f'Categorizing task T{task["task_id"]} as bug based on its issue type')
-    #    if DRYRUN:
-    #        pass
-    #    else:
-    #        add_project(task['task_id'], BUGS_PROJECT, TOKEN)
 
     # Tag tasks "Uncategorized tasks" to draw maintainer attention to them
     # if "Issue type" is not specified
