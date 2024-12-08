@@ -62,11 +62,3 @@ for task in tasks:
             else:
                 unassign_task(task['task_id'], TOKEN)
 
-    # Tag tasks "Uncategorized tasks" to draw maintainer attention to them
-    # if "Issue type" is not specified
-    if task['issue_type'] == 'unspecified':
-        print(f'Marking task T{task["task_id"]} uncategorized based on its issue type')
-        if DRYRUN:
-            pass
-        else:
-            add_project(task['task_id'], UNCATEGORIZED_TASKS_PROJECT, TOKEN)
