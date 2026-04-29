@@ -43,7 +43,3 @@ Mirror twin: `VyOS-Networks/vyos-infrastructure`. The mirror is largely independ
 - Phorge API endpoints can change without notice — pin `requirements.txt` and re-test scheduled jobs after any Phorge upgrade.
 - Avoid embedding board PHIDs or task IDs as constants — read them from config or workflow inputs.
 - Adjacent VyOS-side automation (CVE tracking, release process) lives under `VyOS-Networks/cve-checker` and `VyOS-Networks/vyos-release-process`. Coordinate with their maintainers before duplicating logic.
-
----
-
-This file is mirrored on Confluence: [`vyos/vyos-infrastructure`](https://internal.confluence.vyos.com/wiki/spaces/VYOS/pages/818544904). The Confluence page also carries the per-repo audit data (settings, workflows, secret counts, hygiene) that complements this CLAUDE.md. Edit either side; resync via the documentation pipeline.
