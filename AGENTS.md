@@ -28,7 +28,7 @@ No test suite.
 
 ## Cross-repo context
 - Talks to the Phorge instance at https://vyos.dev (Conduit API). Phorge is the canonical task tracker referenced by the `component: T12345: description` commit convention enforced across every other VyOS repo via `vyos/.github`.
-- Adjacent in role to `VyOS-Networks/big-beautiful-order` (Phorge task version-tag auditor) and `VyOS-Networks/cve-checker`. None of these are part of the build pipeline; they are governance tooling.
+- Adjacent in role to an internal repository (Phorge task version-tag auditor) and an internal repository. None of these are part of the build pipeline; they are governance tooling.
 - `cla-check.yml` delegates to `vyos/vyos-cla-signatures/.github/workflows/cla-reusable.yml@current`.
 
 ## Conventions
@@ -36,10 +36,7 @@ No test suite.
 - Default branch: confirm via `git ls-remote --symref`. Treat as a single-track repo (no LTS branches).
 - Public repo: never commit Phorge API tokens, Conduit certificates, or service-account credentials. Inject via GitHub Actions secrets only.
 
-## Mirror relationship
-Mirror twin: `VyOS-Networks/vyos-infrastructure`. The mirror is largely independent (hosts HCL/Ansible IaC for internal infra); this `vyos/*` side is the public housekeeping scripts only. Do not assume code parity.
-
 ## Notes for future contributors
 - Phorge API endpoints can change without notice — pin `requirements.txt` and re-test scheduled jobs after any Phorge upgrade.
 - Avoid embedding board PHIDs or task IDs as constants — read them from config or workflow inputs.
-- Adjacent VyOS-side automation (CVE tracking, release process) lives under `VyOS-Networks/cve-checker` and `VyOS-Networks/vyos-release-process`. Coordinate with their maintainers before duplicating logic.
+- Adjacent VyOS-side automation (CVE tracking, release process) lives under an internal repository and an internal repository. Coordinate with their maintainers before duplicating logic.
