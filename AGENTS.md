@@ -29,7 +29,7 @@ No test suite.
 ## Cross-repo context
 - Talks to the Phorge instance at https://vyos.dev (Conduit API). Phorge is the canonical task tracker referenced by the `component: T12345: description` commit convention enforced across every other VyOS repo via `vyos/.github`.
 - Adjacent in role to an internal repository (Phorge task version-tag auditor) and an internal repository. None of these are part of the build pipeline; they are governance tooling.
-- `cla-check.yml` delegates to `vyos/vyos-cla-signatures/.github/workflows/cla-reusable.yml@current`.
+- `cla-check.yml` delegates to `vyos/vyos-cla-signatures/.github/workflows/cla-reusable.yml@production`.
 
 ## Conventions
 - Commit/PR title: `component: T12345: description` (Phorge task ID at https://vyos.dev) where applicable.
